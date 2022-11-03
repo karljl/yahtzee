@@ -60,24 +60,26 @@ class Scoreboard:
         self._lower_section[field] += points
 
     def add_score(self, field: str, points: int):
-        if field in self._upper_section:
-            self._add_points_to_upper_section(field, points)
-        elif field in self._lower_section:
-            self._add_points_to_lower_section(field, points)
-        else:
-            raise ValueError(f'invalid field name: {field}')
+        assign_section = {
+            field in self._upper_section: self._add_points_to_upper_section,
+            field in self._lower_section: self._add_points_to_lower_section,
+        }
+
+        try:
+            assign_section[True](field, points)
+        except KeyError:
+            raise KeyError(f'invalid field: {field}')
+
+    @property
+    def readable(self):
+        upper_section = '\n'.join(f'{key.title().ljust(18)}{val}' for key, val in self.upper_section.items())
+        lower_section = '\n'.join(f'{key.title().ljust(18)}{val}' for key, val in self.lower_section.items())
+        upper_section_bonus = 'Bonus' + 13 * ' ' + f'{self.upper_section_bonus()}'
+
+        return f'{upper_section}\n{upper_section_bonus}\n{lower_section}'
 
 
-def to_readable(scoreboard: Scoreboard):
-    upper_section = '\n'.join(f'{key.title().ljust(18)}{val}' for key, val in scoreboard.upper_section.items())
-    lower_section = '\n'.join(f'{key.title().ljust(18)}{val}' for key, val in scoreboard.lower_section.items())
-
-    upper_section_bonus = 'Bonus' + 13 * ' ' + f'{scoreboard.upper_section_bonus()}'
-
-    return f'{upper_section}\n{upper_section_bonus}\n{lower_section}'
-
-
-class GetPoints:
+class CalculatePoints:
 
     def __init__(self, result: list[int]):
         self._result = result
@@ -86,10 +88,23 @@ class GetPoints:
     def _counter_values(self):
         return Counter(self._result).values()
 
-    def for_upper_section(self, field: str):
-        fields: list[str] = ['ones', 'twos', 'threes', 'fours', 'fives', 'sixes']
-        value: int = fields.index(field) + 1
-        return self._result.count(value) * value
+    def for_ones(self):
+        return self._result.count(1)
+
+    def for_twos(self):
+        return 2 * self._result.count(2)
+
+    def for_threes(self):
+        return 3 * self._result.count(3)
+
+    def for_fours(self):
+        return 4 * self._result.count(4)
+
+    def for_fives(self):
+        return 5 * self._result.count(5)
+
+    def for_sixes(self):
+        return 6 * self._result.count(6)
 
     def for_three_of_a_kind(self):
         return sum(self._result) if 3 in self._counter_values else 0
@@ -101,26 +116,17 @@ class GetPoints:
         return 25 if 3 in self._counter_values and 2 in self._counter_values else 0
 
     def for_small_straight(self):
-        combos = {'1234', '2345', '3456'}
+        possible_straights = {'1234', '2345', '3456'}
         modified_result = ''.join(sorted(set(dice_roll_to_str(self._result))))
-        return 30 if any(combo in modified_result for combo in combos) else 0
+        return 30 if any(combo in modified_result for combo in possible_straights) else 0
 
     def for_large_straight(self):
-        combos = {'12345', '23456'}
+        possible_straights = {'12345', '23456'}
         modified_result = ''.join(sorted(set(dice_roll_to_str(self._result))))
-        return 40 if any(combo in modified_result for combo in combos) else 0
+        return 40 if any(combo in modified_result for combo in possible_straights) else 0
 
     def for_yahtzee(self):
         return 50 if len(set(self._result)) == 1 else 0
 
     def for_chance(self):
         return sum(self._result)
-
-
-class AddPoints:
-
-    def __init__(self, scoreboard: Scoreboard):
-        self._scoreboard = scoreboard
-
-    def add_points(self, field: str, points: int):
-        self._scoreboard.add_score(field, points)
