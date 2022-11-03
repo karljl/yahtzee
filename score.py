@@ -115,6 +115,9 @@ class CalculatePoints:
     def for_full_house(self):
         return 25 if 3 in self._counter_values and 2 in self._counter_values else 0
 
+    # Since there are so few combos of straights, it is way easier to hardcode them than to come up with some
+    # algorithm.
+
     def for_small_straight(self):
         possible_straights = {'1234', '2345', '3456'}
         modified_result = ''.join(sorted(set(dice_roll_to_str(self._result))))
