@@ -1,4 +1,3 @@
-from copy import deepcopy
 from collections import Counter
 from dice import dice_roll_to_str
 
@@ -28,14 +27,14 @@ class Scoreboard:
 
     @property
     def upper_section(self):
-        return deepcopy(self._upper_section)
+        return self._upper_section
 
     @property
     def lower_section(self):
-        return deepcopy(self._lower_section)
+        return self._lower_section
 
     def upper_section_bonus(self):
-        return 35 if sum(self._upper_section.values()) > 63 else 0
+        return 35 if sum(self._upper_section.values()) >= 63 else 0
 
     def _upper_section_total(self):
         return sum(self._upper_section.values())
@@ -76,7 +75,7 @@ class Scoreboard:
         lower_section = '\n'.join(f'{key.title().ljust(18)}{val}' for key, val in self.lower_section.items())
         upper_section_bonus = 'Bonus' + 13 * ' ' + f'{self.upper_section_bonus()}'
 
-        return f'{upper_section}\n{upper_section_bonus}\n{lower_section}'
+        return f'{upper_section}\n\n{upper_section_bonus}\n\n{lower_section}'
 
 
 class CalculatePoints:

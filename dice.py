@@ -5,7 +5,6 @@ class Dice:
     """
     I modified the class, so it would always return list[int] even with one value. The question I asked in Slack
     about accepting multiple types as one parameter, can be avoided this way.
-    I would still like to hear your opinion though about the one parameter, multiple types thing. :)
     """
 
     _sides: int = 6

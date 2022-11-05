@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from score import Scoreboard
-from copy import deepcopy
 from dataclasses import dataclass, field
 
 
@@ -12,8 +11,16 @@ class Player:
     figured it would be a good place to try it.
     """
 
-    name: str = field(repr=True, compare=True)
+    name: str = field(compare=True)
     scoreboard: Scoreboard = Scoreboard()
+
+    def __repr__(self):
+        return self.name
+
+
+def create_player(player_name: str):  # TODO: implement getting input for player name
+    new_player = Player(player_name)
+    PlayerDB.add(new_player)
 
 
 class PlayerDB:
@@ -25,5 +32,5 @@ class PlayerDB:
         cls._players.append(player)
 
     @classmethod
-    def get(cls):
-        return deepcopy(cls._players)
+    def players(cls):
+        return cls._players
