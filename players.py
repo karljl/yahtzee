@@ -18,9 +18,10 @@ class Player:
         return self.name
 
 
-def create_player(player_name: str):  # TODO: implement getting input for player name
+def create_player():
+    player_name = input('Enter your name: ').title()  # TODO: implement getting input for player name
     new_player = Player(player_name)
-    PlayerDB.add(new_player)
+    return new_player
 
 
 class PlayerDB:
@@ -29,7 +30,10 @@ class PlayerDB:
 
     @classmethod
     def add(cls, player):
-        cls._players.append(player)
+        if player not in cls._players:
+            cls._players.append(player)
+        else:
+            raise ValueError(f'{player} already exists')
 
     @classmethod
     def players(cls):

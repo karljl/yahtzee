@@ -1,9 +1,22 @@
+from players import create_player, PlayerDB
+from game_state import randomize_player_order
+
+MAX_PLAYERS: int = 3
+
+for _ in range(MAX_PLAYERS):
+    while True:
+        new_player = create_player()
+        try:
+            PlayerDB.add(new_player)
+        except ValueError:
+            print(f'{new_player} already exists. Please choose another name.')
+        else:
+            break
+
+randomized_order_players = randomize_player_order(PlayerDB.players())
+
+
 """
-
-* Create players by entering the name of each player in range of number of max players allowed.
-    - Two players can't have the same name.
-* Pick a random player to begin.
-
 * Main game loop
 
     ROLLING AND KEEPING (inner loop)
