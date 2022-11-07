@@ -80,55 +80,80 @@ class Scoreboard:
 
 class CalculatePoints:
 
-    def __init__(self, result: list[int]):
-        self._result = result
+    def __init__(self, roll: list[int], field: str):
+        self._roll = roll
+        self._field = field
 
     @property
     def _counter_values(self):
-        return Counter(self._result).values()
+        return Counter(self._roll).values()
 
-    def for_ones(self):
-        return self._result.count(1)
+    def calculate_points(self):
+        calculate_field = {
+            'ones': self._for_ones,
+            'twos': self._for_twos,
+            'threes': self._for_threes,
+            'fours': self._for_fours,
+            'fives': self._for_fives,
+            'sixes': self._for_sixes,
+            'three of a kind': self._for_three_of_a_kind,
+            'four of a kind': self._for_four_of_a_kind,
+            'full house': self._for_full_house,
+            'small straight': self._for_small_straight,
+            'large straight': self._for_large_straight,
+            'yahtzee': self._for_yahtzee,
+            'chance': self._for_chance,
+        }
+        try:
+            return calculate_field[self._field]()
+        except KeyError:
+            raise KeyError(f'invalid field {self._field}')
 
-    def for_twos(self):
-        return 2 * self._result.count(2)
+    def _for_ones(self):
+        return self._roll.count(1)
 
-    def for_threes(self):
-        return 3 * self._result.count(3)
+    def _for_twos(self):
+        return 2 * self._roll.count(2)
 
-    def for_fours(self):
-        return 4 * self._result.count(4)
+    def _for_threes(self):
+        return 3 * self._roll.count(3)
 
-    def for_fives(self):
-        return 5 * self._result.count(5)
+    def _for_fours(self):
+        return 4 * self._roll.count(4)
 
-    def for_sixes(self):
-        return 6 * self._result.count(6)
+    def _for_fives(self):
+        return 5 * self._roll.count(5)
 
-    def for_three_of_a_kind(self):
-        return sum(self._result) if 3 in self._counter_values else 0
+    def _for_sixes(self):
+        return 6 * self._roll.count(6)
 
-    def for_four_of_a_kind(self):
-        return sum(self._result) if 4 in self._counter_values else 0
+    def _for_three_of_a_kind(self):
+        return sum(self._roll) if 3 in self._counter_values else 0
 
-    def for_full_house(self):
+    def _for_four_of_a_kind(self):
+        return sum(self._roll) if 4 in self._counter_values else 0
+
+    def _for_full_house(self):
         return 25 if 3 in self._counter_values and 2 in self._counter_values else 0
 
     # Since there are so few combos of straights, it is way easier to hardcode them than to come up with some
     # algorithm.
 
-    def for_small_straight(self):
+    def _for_small_straight(self):
         possible_straights = {'1234', '2345', '3456'}
-        modified_result = ''.join(sorted(set(dice_roll_to_str(self._result))))
+        modified_result = ''.join(sorted(set(dice_roll_to_str(self._roll))))
         return 30 if any(combo in modified_result for combo in possible_straights) else 0
 
-    def for_large_straight(self):
+    def _for_large_straight(self):
         possible_straights = {'12345', '23456'}
-        modified_result = ''.join(sorted(set(dice_roll_to_str(self._result))))
+        modified_result = ''.join(sorted(set(dice_roll_to_str(self._roll))))
         return 40 if any(combo in modified_result for combo in possible_straights) else 0
 
-    def for_yahtzee(self):
-        return 50 if len(set(self._result)) == 1 else 0
+    def _for_yahtzee(self):
+        return 50 if len(set(self._roll)) == 1 else 0
 
-    def for_chance(self):
-        return sum(self._result)
+    def _for_chance(self):
+        return sum(self._roll)
+
+
+

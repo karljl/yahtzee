@@ -28,3 +28,13 @@ def dice_roll_to_str(dice_roll: list[int]):
         return ''.join(map(str, dice_roll))
     else:
         raise ValueError('invalid values, expected list[int]')
+
+
+def str_dice_roll_to_list_int(str_dice_roll: str):
+    return [int(ch) for ch in str_dice_roll]
+
+
+def keep_dice(rolled_dice: str):
+    user_choice = input('Select the dice you want to keep: ')  # TODO: implement getting input for dice to keep
+    # TODO: check if the dice that the user chose are valid
+    return user_choice
