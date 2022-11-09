@@ -1,15 +1,9 @@
-from __future__ import annotations
-
 from score import Scoreboard
 from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
 class Player:
-    """
-    I just learned a bit about dataclasses and since at least at the moment there is no functionality in the class, I
-    figured it would be a good place to try it.
-    """
 
     name: str = field(compare=True)
     scoreboard: Scoreboard = Scoreboard()
@@ -19,7 +13,7 @@ class Player:
 
 
 def create_player():
-    player_name = input('Enter your name: ').title()  # TODO: implement getting input for player name
+    player_name = input('Enter your name: ').title()
     new_player = Player(player_name)
     return new_player
 
@@ -29,7 +23,7 @@ class PlayerDB:
     _players = []
 
     @classmethod
-    def add(cls, player):
+    def add(cls, player: Player):
         if player not in cls._players:
             cls._players.append(player)
         else:

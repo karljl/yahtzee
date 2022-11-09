@@ -2,10 +2,6 @@ from random import randint
 
 
 class Dice:
-    """
-    I modified the class, so it would always return list[int] even with one value. The question I asked in Slack
-    about accepting multiple types as one parameter, can be avoided this way.
-    """
 
     _sides: int = 6
 
@@ -15,26 +11,41 @@ class Dice:
 
 
 def dice_roll_to_str(dice_roll: list[int]):
-    """
-    I created this function because the input from the user is always a string, so it's easier to compare against it if
-    necessary, f.e when picking the dice to keep etc.
-
-    I tried also the opposite way that the roll is always list[int] and I converted user input also to list[int],
-    but I think this one makes more sense, and it is way easier to work with.
-
-    Also, I use this function in score.py/CalculatePoints for calculating the points for small and large straights.
-    """
     if isinstance(dice_roll, list) and all(isinstance(value, int) for value in dice_roll):
         return ''.join(map(str, dice_roll))
     else:
-        raise ValueError('invalid values, expected list[int]')
+        raise ValueError('invalid value, expected list[int]')
 
 
-def str_dice_roll_to_list_int(str_dice_roll: str):
-    return [int(ch) for ch in str_dice_roll]
-
-
-def keep_dice(rolled_dice: str):
-    user_choice = input('Select the dice you want to keep: ')  # TODO: implement getting input for dice to keep
-    # TODO: check if the dice that the user chose are valid
+def keep_dice(rolled_dice: str, user_choice: str):
+    for value in user_choice:
+        if user_choice.count(value) > rolled_dice.count(value):
+            raise ValueError
     return user_choice
+
+
+class DiceKeeper:
+
+    def __init__(self):
+        self._kept_dice: str = ''
+        self._rolled_dice: str = ''
+
+    @property
+    def rolled_dice(self):
+        return self._rolled_dice
+
+    @rolled_dice.setter
+    def rolled_dice(self, value):
+        self._rolled_dice = value
+
+    @property
+    def kept_dice(self):
+        return self._kept_dice
+
+    @kept_dice.setter
+    def kept_dice(self, value):
+        self._kept_dice = value
+
+    def release_kept_dice(self):
+        self._rolled_dice += self._kept_dice
+        self._kept_dice = ''

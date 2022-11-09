@@ -8,7 +8,7 @@ def randomize_player_order(players: list[Player]):
     return players
 
 
-class GameState:
+class TurnKeeper:
 
     def __init__(self, players: list[Player]):
         self._players = players
