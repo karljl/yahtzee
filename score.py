@@ -68,9 +68,9 @@ class Scoreboard:
         except KeyError:
             raise KeyError(f'invalid field: {field}')
         else:
-            if section.__name__ not in self._already_called:
+            if field not in self._already_called:
                 section(field, points)
-                self._already_called.add(section.__name__)
+                self._already_called.add(field)
             else:
                 raise FieldAlreadyUsedError(f'{field} is already used')
 

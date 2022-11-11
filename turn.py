@@ -6,11 +6,14 @@ class TurnKeeper:
 
     def __init__(self, players: list[Player]):
         self._players = players
-        self._current_player: Player = self._players[0]
         self._current_player_id: int = 0
+        self._current_player: Player = self._get_current_player()
+
+    def _get_current_player(self):
+        return self._players[self._current_player_id]
 
     def _assign_current_player(self):
-        self._current_player = self._players[self._current_player_id]
+        self._current_player = self._get_current_player()
 
     def next_turn(self):
         if self._current_player_id != len(self._players) - 1:
