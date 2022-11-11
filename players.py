@@ -1,5 +1,7 @@
 from score import Scoreboard
 from dataclasses import dataclass, field
+from handle_input import get_input, check_name
+from custom_exceptions import PlayerExistsError
 
 
 @dataclass(frozen=True)
@@ -12,12 +14,6 @@ class Player:
         return self.name
 
 
-def create_player():
-    player_name = input('Enter your name: ').title()
-    new_player = Player(player_name)
-    return new_player
-
-
 class PlayerDB:
 
     _players = []
@@ -27,8 +23,18 @@ class PlayerDB:
         if player not in cls._players:
             cls._players.append(player)
         else:
-            raise ValueError(f'{player} already exists')
+            raise PlayerExistsError(f'{player} already exists')
 
     @classmethod
     def players(cls):
         return cls._players
+
+
+def create_player():
+    try:
+        player_name = get_input('Enter your name: ', check_name)
+    except ValueError:
+        raise ValueError
+    else:
+        new_player = Player(player_name.title())
+        return new_player

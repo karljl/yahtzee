@@ -2,12 +2,6 @@ from players import Player
 from random import shuffle
 
 
-def randomize_player_order(players: list[Player]):
-    players = players.copy()
-    shuffle(players)
-    return players
-
-
 class TurnKeeper:
 
     def __init__(self, players: list[Player]):
@@ -28,3 +22,8 @@ class TurnKeeper:
     @property
     def current_player(self):
         return self._current_player
+
+
+def randomize_player_order(players: list[Player]):
+    shuffle(players)
+    return players
