@@ -1,5 +1,5 @@
 def get_input(prompt: str, condition: callable):
-    received_input = input(prompt)
+    received_input = input(prompt).lower()
     if condition(received_input):
         return received_input
     else:
@@ -16,8 +16,33 @@ def check_name(user_input: str):
 
 def check_kept_dice(user_input: str):
     valid_characters = '123456'
-    conditions = (
+    or_conditions = (
         all(ch in valid_characters for ch in user_input),
+        user_input in {'a', 'all'},
+        user_input in {'r', 'release'}
+    )
+    conditions = (
+        any(or_conditions),
         5 >= len(user_input) >= 1
     )
     return all(conditions)
+
+
+def check_field(user_input: str):
+    valid_fields = {
+        'ones',
+        'twos',
+        'threes',
+        'fours',
+        'fives',
+        'sixes',
+        'three of a kind',
+        'four of a kind',
+        'full house',
+        'small straight',
+        'large straight',
+        'yahtzee',
+        'chance'
+    }
+
+    return user_input in valid_fields

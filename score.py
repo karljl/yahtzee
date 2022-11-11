@@ -1,10 +1,13 @@
 from collections import Counter
-from dice import dice_roll_to_str
+from copy import deepcopy
+from custom_exceptions import FieldAlreadyUsedError
 
 
 class Scoreboard:
 
-    def __init__(self):
+    def __init__(self, player):
+
+        self._player = player
 
         self._upper_section: dict = {
             'ones': 0,
@@ -25,7 +28,21 @@ class Scoreboard:
             'chance': 0,
         }
 
-    def _upper_section_bonus(self):
+        self._already_called: set = set()
+
+    @property
+    def player(self):
+        return self._player.name
+
+    @property
+    def upper_section(self):
+        return deepcopy(self._upper_section)
+
+    @property
+    def lower_section(self):
+        return deepcopy(self._lower_section)
+
+    def upper_section_bonus(self):
         return 35 if sum(self._upper_section.values()) >= 63 else 0
 
     def _upper_section_total(self):
@@ -48,33 +65,30 @@ class Scoreboard:
 
         try:
             section = assign_section[True]
-            section(field, points)
         except KeyError:
             raise KeyError(f'invalid field: {field}')
+        else:
+            if section.__name__ not in self._already_called:
+                section(field, points)
+                self._already_called.add(section.__name__)
+            else:
+                raise FieldAlreadyUsedError(f'{field} is already used')
 
     @property
     def total_score(self):
         return sum(
             [
                 self._upper_section_total(),
-                self._upper_section_bonus(),
+                self.upper_section_bonus(),
                 self._lower_section_total()
             ]
         )
 
-    @property
-    def readable(self):
-        upper_section = '\n'.join(f'{key.title().ljust(18)}{val}' for key, val in self._upper_section.items())
-        lower_section = '\n'.join(f'{key.title().ljust(18)}{val}' for key, val in self._lower_section.items())
-        upper_section_bonus = 'Bonus' + 13 * ' ' + f'{self._upper_section_bonus()}'
-
-        return f'{upper_section}\n\n{upper_section_bonus}\n\n{lower_section}'
-
 
 class CalculatePoints:
 
-    def __init__(self, roll: list[int], field: str):
-        self._roll = roll
+    def __init__(self, kept_dice: str, field: str):
+        self._kept_dice = kept_dice
         self._field = field
 
         self._field_calculator = {
@@ -95,50 +109,50 @@ class CalculatePoints:
 
     @property
     def _counter_values(self):
-        return Counter(self._roll).values()
+        return Counter(self._kept_dice).values()
 
     def _for_ones(self):
-        return self._roll.count(1)
+        return self._kept_dice.count('1')
 
     def _for_twos(self):
-        return 2 * self._roll.count(2)
+        return 2 * self._kept_dice.count('2')
 
     def _for_threes(self):
-        return 3 * self._roll.count(3)
+        return 3 * self._kept_dice.count('3')
 
     def _for_fours(self):
-        return 4 * self._roll.count(4)
+        return 4 * self._kept_dice.count('4')
 
     def _for_fives(self):
-        return 5 * self._roll.count(5)
+        return 5 * self._kept_dice.count('5')
 
     def _for_sixes(self):
-        return 6 * self._roll.count(6)
+        return 6 * self._kept_dice.count('6')
 
     def _for_three_of_a_kind(self):
-        return sum(self._roll) if 3 in self._counter_values else 0
+        return sum(self._kept_dice) if 3 in self._counter_values else 0
 
     def _for_four_of_a_kind(self):
-        return sum(self._roll) if 4 in self._counter_values else 0
+        return sum(self._kept_dice) if 4 in self._counter_values else 0
 
     def _for_full_house(self):
         return 25 if 3 in self._counter_values and 2 in self._counter_values else 0
 
     def _for_small_straight(self):
         possible_straights = {'1234', '2345', '3456'}
-        modified_result = ''.join(sorted(set(dice_roll_to_str(self._roll))))
+        modified_result = ''.join(sorted(set(self._kept_dice)))
         return 30 if any(combo in modified_result for combo in possible_straights) else 0
 
     def _for_large_straight(self):
         possible_straights = {'12345', '23456'}
-        modified_result = ''.join(sorted(set(dice_roll_to_str(self._roll))))
+        modified_result = ''.join(sorted(set(self._kept_dice)))
         return 40 if any(combo in modified_result for combo in possible_straights) else 0
 
     def _for_yahtzee(self):
-        return 50 if len(set(self._roll)) == 1 else 0
+        return 50 if len(set(self._kept_dice)) == 1 else 0
 
     def _for_chance(self):
-        return sum(self._roll)
+        return sum(int(ch) for ch in self._kept_dice)
 
     def calculate_points(self):
         try:

@@ -1,17 +1,24 @@
 from score import Scoreboard
-from dataclasses import dataclass, field
 from handle_input import get_input, check_name
 from custom_exceptions import PlayerExistsError
 
 
-@dataclass(frozen=True)
 class Player:
 
-    name: str = field(compare=True)
-    scoreboard: Scoreboard = Scoreboard()
+    def __init__(self, name: str):
+        self._name = name
+        self._scoreboard: Scoreboard = Scoreboard(self)
 
     def __repr__(self):
-        return self.name
+        return self._name
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def scoreboard(self):
+        return self._scoreboard
 
 
 class PlayerDB:

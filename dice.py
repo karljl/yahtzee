@@ -35,6 +35,10 @@ class DiceKeeper:
         self._rolled_dice += self._kept_dice
         self._kept_dice = ''
 
+    @property
+    def is_kept_dice(self):
+        return len(self._kept_dice) != 0
+
 
 def dice_roll_to_str(dice_roll: list[int]):
     if isinstance(dice_roll, list) and all(isinstance(value, int) for value in dice_roll):
@@ -44,6 +48,12 @@ def dice_roll_to_str(dice_roll: list[int]):
 
 
 def keep_dice(rolled_dice: str, user_choice: str):
+    if user_choice in {'a', 'all'}:
+        return rolled_dice
+
+    if user_choice in {'r', 'release'}:
+        return user_choice
+
     for value in user_choice:
         if user_choice.count(value) > rolled_dice.count(value):
             raise ValueError
