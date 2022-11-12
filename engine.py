@@ -39,15 +39,13 @@ while True:
             dice_roll = dice.roll(times_to_roll)
             dice_keeper.rolled_dice = dice_roll_to_str(dice_roll)
             print(f"It's {current_player}'s turn.")
+            print(f'{current_player} rolled: {dice_keeper.rolled_dice}.')
+
+            if dice_keeper.is_kept_dice:
+                print(f'Previously kept dice: {dice_keeper.kept_dice}')
 
             if roll_counter != 2:
                 while True:
-
-                    print(f'{current_player} rolled: {dice_keeper.rolled_dice}.')
-
-                    if dice_keeper.is_kept_dice:
-                        print(f'Previously kept dice: {dice_keeper.kept_dice}')
-
                     try:
                         choose_dice_to_keep = get_input('Choose the dice you wish to keep: ', check_kept_dice)
                         user_choice_kept_dice = keep_dice(dice_keeper.rolled_dice, choose_dice_to_keep)
@@ -57,6 +55,7 @@ while True:
                         if user_choice_kept_dice in {'r', 'release'}:
                             if dice_keeper.is_kept_dice:
                                 dice_keeper.release_kept_dice()
+                                print(f'All dice: {dice_keeper.rolled_dice}')
                             else:
                                 print('There are no previously rolled dice to release.')
                         else:
