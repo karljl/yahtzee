@@ -85,7 +85,7 @@ class Scoreboard:
         )
 
 
-class CalculatePoints:
+class PointsCalculator:
 
     def __init__(self, kept_dice: str, field: str):
         self._kept_dice = kept_dice

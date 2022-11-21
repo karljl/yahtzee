@@ -2,11 +2,15 @@ from random import randint
 
 
 class Dice:
-    _sides: int = 6
 
-    @classmethod
-    def roll(cls, times: int):
-        return [randint(1, cls._sides) for _ in range(times)]
+    def __init__(self, sides: int):
+        self._sides = sides
+
+    def roll(self, times: int):
+        return [randint(1, self._sides) for _ in range(times)]
+
+
+dice = Dice(6)
 
 
 class DiceKeeper:
