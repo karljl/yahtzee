@@ -8,3 +8,7 @@ def display_readable_scoreboard(scoreboard: Scoreboard):
     upper_section_bonus = 'Bonus' + 13 * ' ' + f'{scoreboard.upper_section_bonus()}'
 
     return f'{player}\n{upper_section}\n\n{upper_section_bonus}\n\n{lower_section}'
+
+
+def display_dice(roll: str):
+    return ' '.join(f'[{ch}]' for ch in roll)

@@ -4,7 +4,7 @@ from dice import dice, DiceKeeper, dice_roll_to_str, keep_dice
 from custom_exceptions import PlayerExistsError, FieldAlreadyUsedError
 from handle_input import get_input, check_kept_dice, check_field
 from score import PointsCalculator
-from display import display_readable_scoreboard
+from display import display_readable_scoreboard, display_dice
 from constants import MAX_PLAYERS
 
 
@@ -16,10 +16,13 @@ def create_players():
                 PlayerDB.add(new_player)
             except PlayerExistsError:
                 print('This name already exists. Please choose another name.')
+                print()
             except ValueError:
                 print('Invalid name.')
+                print()
             else:
                 print(f'Player {new_player} successfully created!')
+                print()
                 break
 
 
@@ -43,10 +46,10 @@ def game_loop(turn_keeper: TurnKeeper):
                 dice_roll = dice.roll(times_to_roll)
                 dice_keeper.rolled_dice = dice_roll_to_str(dice_roll)
                 print(f"It's {current_player}'s turn.")
-                print(f'{current_player} rolled: {dice_keeper.rolled_dice}.')
+                print(f'{current_player} rolled: {display_dice(dice_keeper.rolled_dice)}.')
 
                 if dice_keeper.is_kept_dice:
-                    print(f'Previously kept dice: {dice_keeper.kept_dice}')
+                    print(f'Previously kept dice: {display_dice(dice_keeper.kept_dice)}')
 
                 if roll_counter != 2:
                     while True:
@@ -56,10 +59,10 @@ def game_loop(turn_keeper: TurnKeeper):
                         except ValueError:
                             print('Invalid values chosen.')
                         else:
-                            if user_choice_kept_dice in {'r', 'release'}:
+                            if user_choice_kept_dice == 'r':
                                 if dice_keeper.is_kept_dice:
                                     dice_keeper.release_kept_dice()
-                                    print(f'All dice: {dice_keeper.rolled_dice}')
+                                    print(f'All available dice: {display_dice(dice_keeper.rolled_dice)}')
                                 else:
                                     print('There are no previously rolled dice to release.')
                             else:
@@ -69,12 +72,15 @@ def game_loop(turn_keeper: TurnKeeper):
                     user_choice_kept_dice = keep_dice(dice_keeper.rolled_dice, dice_keeper.rolled_dice)
                     dice_keeper.kept_dice = user_choice_kept_dice
                     print('Keeping the remaining dice automatically.')
-                    print(dice_keeper.kept_dice)
+                    print(display_dice(dice_keeper.kept_dice))
                     break
 
-                dice_keeper.kept_dice = user_choice_kept_dice
+                if user_choice_kept_dice != 'n':
+                    dice_keeper.kept_dice = user_choice_kept_dice
+                    print(f'{current_player} kept: {display_dice(dice_keeper.kept_dice)}')
+                else:
+                    print(f'{current_player} did not keep any dice.')
                 roll_counter += 1
-                print(dice_keeper.kept_dice)
 
             else:
                 break

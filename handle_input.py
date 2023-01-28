@@ -18,8 +18,7 @@ def check_kept_dice(user_input: str):
     valid_characters = '123456'
     or_conditions = (
         all(ch in valid_characters for ch in user_input),
-        user_input == 'a',
-        user_input == 'r'
+        user_input in {'a', 'r', 'n'}
     )
     conditions = (
         any(or_conditions),

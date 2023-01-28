@@ -52,13 +52,12 @@ def dice_roll_to_str(dice_roll: list[int]):
 
 
 def keep_dice(rolled_dice: str, user_choice: str):
-    if user_choice in {'a', 'all'}:
+    if user_choice == 'a':
         return rolled_dice
 
-    if user_choice in {'r', 'release'}:
-        return user_choice
+    if user_choice not in {'r', 'n'}:
+        for value in user_choice:
+            if user_choice.count(value) > rolled_dice.count(value):
+                raise ValueError
 
-    for value in user_choice:
-        if user_choice.count(value) > rolled_dice.count(value):
-            raise ValueError
     return user_choice
